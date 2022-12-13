@@ -23,7 +23,7 @@ async function onFormSubmit(e) {
   const {
     elements: { searchQuery },
   } = e.currentTarget;
-  const searchValue = searchQuery.value.trim().toLowerCase();
+  searchOptions.q = searchQuery.value.trim().toLowerCase();
 
   try {
     const collection = await getImagesByQuery();
@@ -47,16 +47,17 @@ const searchOptions = {
   page: 1,
 };
 async function getImagesByQuery() {
+  searchOptions.page = 0;
   searchOptions.page += 1;
-  const searchValue = searchOptions.q;
+  //const searchValue = searchOptions.q;
   const searchParams = { params: searchOptions };
   const response = await axios.get(BASE_URL, searchParams);
 
-  // if (response.data.hits.length === 0) {
-  //   Notify.failure(
-  //     'Sorry, there are no images matching your search query. Please try again.'
-  //   );
-  //   return;
+  //if (response.data.hits.length === 0) {
+  //  Notify.failure(
+  //    'Sorry, there are no images matching your search query. Please try again.'
+  //  );
+  //  return;
   // }
   return response;
 }
