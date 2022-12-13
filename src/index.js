@@ -10,6 +10,54 @@ const refs = {
   galleryContainer: document.querySelector('.gallery'),
 };
 
+const lightBoxOptions = {
+  captionsData: 'alt',
+  captionDelay: 250,
+  captionPosition: 'bottom',
+  showCounter: true,
+};
+var lightbox = new SimpleLightbox('.gallery a', lightBoxOptions);
+
+async function onFormSubmit(e) {
+  e.preventDefault();
+  const {
+    elements: { searchQuery },
+  } = e.currentTarget;
+  const searchValue = searchQuery.value.trim().toLowerCase();
+  try {
+    const collection = await getImagesByQuery();
+
+    console.log(collection);
+  } catch (error) {
+    console.log(error.message);
+  }
+  refs.form.reset();
+}
+refs.form.addEventListener('sumbit', onFormSubmit);
+
+const BASE_URL = 'https://pixabay.com/api/';
+const searchOptions = {
+  key: '24406319-bf3b8b8cf58844aea35169848',
+  q: '',
+  image_type: 'photo',
+  orientation: 'horizontal',
+  safesearch: true,
+  per_page: 40,
+  page: 1,
+};
+async function getImagesByQuery() {
+  searchOptions.page += 1;
+  const searchParams = { params: searchOptions };
+  const response = await axios.get(BASE_URL, searchParams);
+
+  if (response.data.hits.length === 0) {
+    Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+    return;
+  }
+  return response;
+}
 function createGallery(images) {
   return images
     .map(
@@ -42,46 +90,3 @@ function createGallery(images) {
     .join('');
 }
 refs.galleryContainer.insertAdjacentHTML('beforeend', createGallery);
-
-const lightBoxOptions = {
-  captionsData: 'alt',
-  captionDelay: 250,
-  captionPosition: 'bottom',
-  showCounter: true,
-};
-let gallery = new Simplelightbox('.gallery a', lightBoxOptions);
-
-const searchOptions = {
-  BASE_URL: 'https://pixabay.com/api/',
-  key: '31991088-557b1f719244b12b6790ca772',
-  q: '',
-  image_type: 'photo',
-  orientation: 'horizontal',
-  safesearch: true,
-  per_page: 40,
-  page: 1,
-
-  async getImagesByQuery(page) {
-    const { data } = await axios.get(
-      `${searchOptions.BASE_URL}?key=${searchOptions.key}&q=${searchOptions.q}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${searchOptions.page}`
-    );
-
-    return data;
-  },
-};
-
-refs.form.addEventListener('sumbit', onFormSubmit);
-async function onFormSubmit(e) {
-  e.preventDefault();
-  const {
-    elements: { searchQuery },
-  } = e.currentTarget;
-  const searchValue = searchQuery.value.trim().toLowerCase();
-  try {
-    const collection = await getImagesByQuery();
-    console.log(collection);
-  } catch (error) {
-    console.log(error);
-  }
-  refs.form.reset();
-}
