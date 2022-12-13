@@ -16,7 +16,7 @@ const lightBoxOptions = {
   captionPosition: 'bottom',
   showCounter: true,
 };
-var lightbox = new SimpleLightbox('.gallery a', lightBoxOptions);
+let lightbox = new SimpleLightbox('.gallery a', lightBoxOptions);
 
 async function onFormSubmit(e) {
   e.preventDefault();
@@ -24,6 +24,7 @@ async function onFormSubmit(e) {
     elements: { searchQuery },
   } = e.currentTarget;
   const searchValue = searchQuery.value.trim().toLowerCase();
+  //const searchValue = searchOptions.q;
   try {
     const collection = await getImagesByQuery();
 
@@ -33,11 +34,11 @@ async function onFormSubmit(e) {
   }
   refs.form.reset();
 }
-refs.form.addEventListener('sumbit', onFormSubmit);
+refs.form.addEventListener('submit', onFormSubmit);
 
 const BASE_URL = 'https://pixabay.com/api/';
 const searchOptions = {
-  key: '24406319-bf3b8b8cf58844aea35169848',
+  key: '31991088-557b1f719244b12b6790ca772',
   q: '',
   image_type: 'photo',
   orientation: 'horizontal',
@@ -47,6 +48,7 @@ const searchOptions = {
 };
 async function getImagesByQuery() {
   searchOptions.page += 1;
+  const searchValue = searchOptions.q;
   const searchParams = { params: searchOptions };
   const response = await axios.get(BASE_URL, searchParams);
 
@@ -70,22 +72,22 @@ function createGallery(images) {
         comments,
         downloads,
       }) => `<div class="photo-card">
-  <a href="${largeImageURL}"><img class="preview-image" src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
-  <div class="info">
-    <p class="info-item">
-      <b>Likes: </b>${likes}
-    </p>
-    <p class="info-item">
-      <b>Views: </b>${views}
-    </p>
-    <p class="info-item">
-      <b>Comments: </b>${comments}
-    </p>
-    <p class="info-item">
+   <a href="${largeImageURL}"><img class="preview-image" src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
+   <div class="info">
+     <p class="info-item">
+       <b>Likes: </b>${likes}
+     </p>
+     <p class="info-item">
+       <b>Views: </b>${views}
+     </p>
+     <p class="info-item">
+       <b>Comments: </b>${comments}
+     </p>
+     <p class="info-item">
       <b>Downloads: </b>${downloads}
-    </p>
-  </div>
-</div> `
+     </p>
+   </div>
+ </div> `
     )
     .join('');
 }
