@@ -24,7 +24,7 @@ async function onFormSubmit(e) {
     elements: { searchQuery },
   } = e.currentTarget;
   const searchValue = searchQuery.value.trim().toLowerCase();
-  //const searchValue = searchOptions.q;
+
   try {
     const collection = await getImagesByQuery();
 
@@ -52,16 +52,16 @@ async function getImagesByQuery() {
   const searchParams = { params: searchOptions };
   const response = await axios.get(BASE_URL, searchParams);
 
-  if (response.data.hits.length === 0) {
-    Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
-    );
-    return;
-  }
+  // if (response.data.hits.length === 0) {
+  //   Notify.failure(
+  //     'Sorry, there are no images matching your search query. Please try again.'
+  //   );
+  //   return;
+  // }
   return response;
 }
-function createGallery(images) {
-  return images
+function renderMarkup({ data }) {
+  const markup = data.hits
     .map(
       ({
         webformatURL,
@@ -90,5 +90,5 @@ function createGallery(images) {
  </div> `
     )
     .join('');
+  refs.galleryContainer.insertAdjacentHTML('beforeend', markup);
 }
-refs.galleryContainer.insertAdjacentHTML('beforeend', createGallery);
