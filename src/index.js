@@ -20,21 +20,39 @@ let lightbox = new SimpleLightbox('.gallery a', lightBoxOptions);
 
 async function onFormSubmit(e) {
   e.preventDefault();
+  searchOptions.page = 0;
   const {
     elements: { searchQuery },
   } = e.currentTarget;
   searchOptions.q = searchQuery.value.trim().toLowerCase();
+  if (searchOptions.q === '') {
+    showInfoNotification();
+    clearPreviousRequest();
+    return;
+  }
 
   try {
     const collection = await getImagesByQuery();
-
-    console.log(collection);
+    onSuccessfulExecution(collection);
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
   refs.form.reset();
 }
 refs.form.addEventListener('submit', onFormSubmit);
+function clearPreviousRequest() {
+  refs.galleryContainer.innerHTML = '';
+}
+function onClick(evt) {
+  evt.preventDefault();
+  lightbox.open('.gallery');
+}
+function onSuccessfulExecution(answer) {
+  renderMarkup(answer);
+  lightbox.refresh();
+  refs.galleryContainer.addEventListener('click', onClick);
+  showSuccessNotification(answer);
+}
 
 const BASE_URL = 'https://pixabay.com/api/';
 const searchOptions = {
@@ -47,18 +65,17 @@ const searchOptions = {
   page: 1,
 };
 async function getImagesByQuery() {
-  searchOptions.page = 0;
   searchOptions.page += 1;
   //const searchValue = searchOptions.q;
   const searchParams = { params: searchOptions };
   const response = await axios.get(BASE_URL, searchParams);
 
-  //if (response.data.hits.length === 0) {
-  //  Notify.failure(
-  //    'Sorry, there are no images matching your search query. Please try again.'
-  //  );
-  //  return;
-  // }
+  if (response.data.hits.length === 0) {
+    Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+    return;
+  }
   return response;
 }
 function renderMarkup({ data }) {
@@ -92,4 +109,10 @@ function renderMarkup({ data }) {
     )
     .join('');
   refs.galleryContainer.insertAdjacentHTML('beforeend', markup);
+}
+function showInfoNotification() {
+  Notify.info("The search term couldn't be empty.");
+}
+function showSuccessNotification(answer) {
+  Notify.success(`Hooray! We found ${answer.data.totalHits} images.`);
 }
