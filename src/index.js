@@ -20,6 +20,7 @@ let lightbox = new SimpleLightbox('.gallery a', lightBoxOptions);
 
 async function onFormSubmit(e) {
   e.preventDefault();
+  clearPreviousRequest();
   searchOptions.page = 0;
   const {
     elements: { searchQuery },
@@ -28,6 +29,7 @@ async function onFormSubmit(e) {
   if (searchOptions.q === '') {
     showInfoNotification();
     clearPreviousRequest();
+
     return;
   }
 
@@ -39,7 +41,7 @@ async function onFormSubmit(e) {
   }
   refs.form.reset();
 }
-refs.form.addEventListener('submit', onFormSubmit);
+
 function clearPreviousRequest() {
   refs.galleryContainer.innerHTML = '';
 }
@@ -49,9 +51,10 @@ function onClick(evt) {
 }
 function onSuccessfulExecution(answer) {
   renderMarkup(answer);
-  lightbox.refresh();
+
   refs.galleryContainer.addEventListener('click', onClick);
   showSuccessNotification(answer);
+  lightbox.refresh();
 }
 
 const BASE_URL = 'https://pixabay.com/api/';
@@ -66,7 +69,6 @@ const searchOptions = {
 };
 async function getImagesByQuery() {
   searchOptions.page += 1;
-  //const searchValue = searchOptions.q;
   const searchParams = { params: searchOptions };
   const response = await axios.get(BASE_URL, searchParams);
 
@@ -77,6 +79,37 @@ async function getImagesByQuery() {
     return;
   }
   return response;
+}
+async function onLoadMore(e) {
+  page += 1;
+
+  setTimeout(() => {
+    refs.loadMoreBtn.blur();
+  }, 200);
+
+  const collection = await getImagesByQuery();
+  onSuccessfulExecution(collection);
+  lightbox.refresh();
+
+  const markup = renderMarkup(data.hits);
+  refs.galleryContainer.insertAdjacentHTML('beforeend', markup);
+  page += 1;
+  const totalPage = (await data.totalHits) / 40;
+  if (page >= totalPage) {
+    Notify.info("We're sorry, but you've reached the end of search results.");
+    refs.loadMoreBtn.setAttribute('disabled', true);
+  }
+  await smoothScroll();
+}
+
+async function smoothScroll() {
+  const { height: cardHeight } =
+    refs.galleryContainer.querySelector.firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
 function renderMarkup({ data }) {
   const markup = data.hits
@@ -116,3 +149,6 @@ function showInfoNotification() {
 function showSuccessNotification(answer) {
   Notify.success(`Hooray! We found ${answer.data.totalHits} images.`);
 }
+
+refs.form.addEventListener('submit', onFormSubmit);
+refs.form.addEventListener('click', onLoadMore);

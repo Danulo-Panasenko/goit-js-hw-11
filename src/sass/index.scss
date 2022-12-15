@@ -1,2 +1,58 @@
 @import './common';
 @import './example';
+
+// body {
+//   background-color: rgb(133, 250, 250);
+// }
+.gallery {
+  display: flex;
+  max-width: 1140px;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: start;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+}
+
+.preview-image {
+  max-width: 100%;
+  height: 250px;
+  object-fit: cover;
+  transition: transform 250ms linear;
+}
+
+// .preview-image:hover {
+//   transform: scale(1.1);
+// }
+.photo-card:hover {
+  transform: scale(1.1);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.12), 0px 4px 4px rgba(0, 0, 0, 0.06),
+    1px 4px 6px rgba(0, 0, 0, 0.16);
+}
+
+.photo-card {
+  position: relative;
+  flex-basis: calc((100% - 40px) / 3);
+  border: 1px solid #eeeeee;
+  border-radius: 7px;
+}
+.info {
+  display: flex;
+}
+.search-form {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: stretch;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  // background-color: RGB (240 248 255);
+  //border: 1px solid #f5f4fa;
+}
+.container {
+  padding-top: 24px;
+  padding-bottom: 24px;
+  border: 1px solid #f5f4fa;
+  background-color: blue;
+}
