@@ -56,3 +56,43 @@
   border: 1px solid #f5f4fa;
   background-color: blue;
 }
+// .load-more {
+//   padding-left: 30px;
+//   padding-right: 30px;
+//   display: flex;
+//   justify-content: center;
+//   padding-top: 15px;
+//   padding-bottom: 15px;
+//   margin-top: 20px;
+//   margin-bottom: 20px;
+//   margin-left: auto;
+//   margin-right: auto;
+// }
+
+// .load-more:focus {
+//   box-shadow: 0 0 5px 5px palegoldenrod;
+// }
+
+// .load-more {
+//   display: none;
+// }
+.load-more {
+  position: relative;
+  left: 50%;
+  transform: translate(-50%, 0);
+  margin-bottom: 15px;
+  width: 170px;
+  height: 50px;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}

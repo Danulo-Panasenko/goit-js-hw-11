@@ -44,6 +44,7 @@ async function onFormSubmit(e) {
 
 function clearPreviousRequest() {
   refs.galleryContainer.innerHTML = '';
+  refs.loadMoreBtn.classList.add('visually-hidden');
 }
 function onClick(evt) {
   evt.preventDefault();
@@ -81,12 +82,6 @@ async function getImagesByQuery() {
   return response;
 }
 async function onLoadMore(e) {
-  page += 1;
-
-  setTimeout(() => {
-    refs.loadMoreBtn.blur();
-  }, 200);
-
   const collection = await getImagesByQuery();
   onSuccessfulExecution(collection);
   lightbox.refresh();
@@ -142,6 +137,7 @@ function renderMarkup({ data }) {
     )
     .join('');
   refs.galleryContainer.insertAdjacentHTML('beforeend', markup);
+  refs.loadMoreBtn.classList.remove('visually-hidden');
 }
 function showInfoNotification() {
   Notify.info("The search term couldn't be empty.");
@@ -151,4 +147,4 @@ function showSuccessNotification(answer) {
 }
 
 refs.form.addEventListener('submit', onFormSubmit);
-refs.form.addEventListener('click', onLoadMore);
+refs.loadMoreBtn.addEventListener('click', onLoadMore);
